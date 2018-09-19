@@ -16,20 +16,34 @@ describe('Deleting a user',() => {
             })
     })
 
-    it('model instance removed',() => {
+    it('model instance removed',(done) => {
+
+        paddy.remove()
+            .then(() => {
+
+                User.findOne({name:'Paddy'})
+                    .then((user) => {
+
+                        assert(user===null);
+                        done();
+                    })
+            })
 
     });
 
-    it('class method remove',() => {
+    it('class method remove',(done) => {
+
+        User.remove({name:'Paddy'})
+            .then(() => {
+
+                User.findOne({name:'Paddy'})
+                    .then((user) => {
+                        assert(user===null);
+                        done();
+                    })
+            });
 
     });
 
-    it('class method findAndRemove',() =>{
-
-    })
-
-    it('class method findAndRemoveById',() =>{
-
-        
-    })
+   
 })
