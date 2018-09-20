@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const assert = require('assert');
 const User = require('../src/user')
 const Comment = require('../src/comment');
 const BlogPost = require('../src/BlogPost');
@@ -25,12 +26,35 @@ describe('Assosciations', () => {
             })
     })
 
-    it.only('Assosciates blogpost with user' ,(done) => {
+    it('Assosciates blogpost with user' ,(done) => {
 
         User.findOne({name:'paddy'})
+            .populate('blogPosts')
             .then((user) => {
 
-                console.log(user);
+                // console.log(user.blogPosts[0]);
+                done();
+            })
+    })
+
+    it('saves a full relation graph', (done) => {
+
+        User.findOne({name:'paddy'})
+            .populate({
+                path:'blogPosts',
+                populate:{
+                    path:'comments',
+                    model:'comment',
+                    populate:{
+                        path:'user',
+                        model:'user'
+                    }
+                }
+            })
+            .then((user) => {
+                assert(user.name === 'paddy');
+                assert(user.blogPosts[0].title === 'South Park');
+                assert(user.blogPosts[0].comments[0].user.name==='paddy')
                 done();
             })
     })
